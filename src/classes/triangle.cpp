@@ -1,5 +1,11 @@
 #include "triangle.hpp"
 
+float calculateDistance(float x1, float y1, float x2, float y2) {
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
 triangle::triangle(const GLfloat vertices[], sf::Window& window) {
     windowSize = window.getSize();
     for (int i = 0; i < vertexCount; i += 3) {
@@ -7,6 +13,24 @@ triangle::triangle(const GLfloat vertices[], sf::Window& window) {
         _vertices[i + 1] = vertices[i + 1] / windowSize.y;
         _vertices[i + 2] = vertices[i + 2];
     }
+    middle = calculateMiddlePoint();
+    lengths = calculateLengths();
+}
+
+glm::vec3 triangle::calculateMiddlePoint() const {
+    glm::vec3 middlePoint;
+    middlePoint.x = (_vertices[0] + _vertices[3] + _vertices[6]) / 3.0f;
+    middlePoint.y = (_vertices[1] + _vertices[4] + _vertices[7]) / 3.0f;
+    middlePoint.z = (_vertices[2] + _vertices[5] + _vertices[8]) / 3.0f;
+    return middlePoint;
+}
+
+glm::vec3 triangle::calculateLengths() const {
+    glm::vec3 _lengths;
+    _lengths[0] = calculateDistance(_vertices[0], _vertices[1], middle.x, middle.y);
+    _lengths[1] = calculateDistance(_vertices[3], _vertices[4], middle.x, middle.y);
+    _lengths[2] = calculateDistance(_vertices[6], _vertices[7], middle.x, middle.y);
+    return _lengths;
 }
 
 void triangle::buffer() {
@@ -28,4 +52,40 @@ void triangle::draw() {
     );
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glDisableVertexAttribArray(0);
+}
+
+void triangle::move(glm::vec3 vector) {
+    _vertices[0] += vector.x / windowSize.x;
+    _vertices[1] += vector.y / windowSize.y;
+    _vertices[2] += vector.z;
+
+    _vertices[3] += vector.x / windowSize.x;
+    _vertices[4] += vector.y / windowSize.y;
+    _vertices[5] += vector.z;
+
+    _vertices[6] += vector.x / windowSize.x;
+    _vertices[7] += vector.y / windowSize.y;
+    _vertices[8] += vector.z;
+
+    buffer();
+}
+
+void triangle::place(glm::vec3 point) {
+    
+    glm::vec3 currentMiddle = calculateMiddlePoint();
+    glm::vec3 displacement = point - currentMiddle;
+
+    _vertices[0] += displacement.x;
+    _vertices[1] += displacement.y;
+    _vertices[2] += displacement.z;
+
+    _vertices[3] += displacement.x;
+    _vertices[4] += displacement.y;
+    _vertices[5] += displacement.z;
+
+    _vertices[6] += displacement.x;
+    _vertices[7] += displacement.y;
+    _vertices[8] += displacement.z;
+
+    buffer();
 }
