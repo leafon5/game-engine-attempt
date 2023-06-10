@@ -19,3 +19,12 @@ I have made it bounce, and I'm proud of it. (this was such a pain to make, the t
 ## Notes to self:
 - Remember to initialize GLEW after the window gets activated and before you create any VAOs
 - makefiles are a mess
+
+# Day 2
+
+so i have learnt how shaders work, mainly fragment shaders, right now I dont have a big understanding of vertex shaders, AND I MANAGED TO MAKE THE LIL FACE PULSE IN PINK HAAAAAAA
+
+
+I AM LEARNING ALL THAT MATRIX STUFF AND I HAVE MANAGED TO MAKE IT SPIN YEEEEEEEEEEEEEEEEEEEAAAAA
+
+i have learnt to make a shake effect nad all that stuff, pretty cool huh?

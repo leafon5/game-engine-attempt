@@ -87,5 +87,6 @@ void triangle::place(glm::vec3 point) {
     _vertices[7] += displacement.y;
     _vertices[8] += displacement.z;
 
+    middle = calculateMiddlePoint();
     buffer();
 }
