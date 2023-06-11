@@ -6,12 +6,9 @@ float calculateDistance(float x1, float y1, float x2, float y2) {
     return std::sqrt(dx * dx + dy * dy);
 }
 
-triangle::triangle(const GLfloat vertices[], sf::Window& window) {
-    windowSize = window.getSize();
-    for (int i = 0; i < vertexCount; i += 3) {
-        _vertices[i] = vertices[i] / windowSize.x;
-        _vertices[i + 1] = vertices[i + 1] / windowSize.y;
-        _vertices[i + 2] = vertices[i + 2];
+triangle::triangle(const GLfloat vertices[]) {
+    for (int i = 0; i < vertexCount; i++) {
+        _vertices[i] = vertices[i];
     }
     middle = calculateMiddlePoint();
     lengths = calculateLengths();
@@ -55,16 +52,16 @@ void triangle::draw() {
 }
 
 void triangle::move(glm::vec3 vector) {
-    _vertices[0] += vector.x / windowSize.x;
-    _vertices[1] += vector.y / windowSize.y;
+    _vertices[0] += vector.x;
+    _vertices[1] += vector.y;
     _vertices[2] += vector.z;
 
-    _vertices[3] += vector.x / windowSize.x;
-    _vertices[4] += vector.y / windowSize.y;
+    _vertices[3] += vector.x;
+    _vertices[4] += vector.y;
     _vertices[5] += vector.z;
 
-    _vertices[6] += vector.x / windowSize.x;
-    _vertices[7] += vector.y / windowSize.y;
+    _vertices[6] += vector.x;
+    _vertices[7] += vector.y;
     _vertices[8] += vector.z;
 
     buffer();

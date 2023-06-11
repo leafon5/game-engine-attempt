@@ -34,9 +34,9 @@ int main()
     float jumpHeight = 0.5f; // Maximum height of the jump
     float jumpDuration = 2.f; // Duration of the jump in seconds
     float time = 0.0f;
-    // float rotationSpeed = 3.0f; // Adjust the speed of rotation
-    // float angleY = 0.0f; // Initial rotation angle
-    // float radius = 2.0f; // Adjust the radius of the circular path
+    float rotationSpeed = 3.0f; // Adjust the speed of rotation
+    float angleY = 0.0f; // Initial rotation angle
+    float radius = 2.0f; // Adjust the radius of the circular path
     float speed = 20.0f;
     float intensity = 0.2f;
 
@@ -62,65 +62,65 @@ int main()
 
     // An array of 3 vectors which represents 3 vertices
     const GLfloat t1[] = {
-        -400.0f, 300.0f, 0.0f,
-        -200.0f, 300.0f, 0.0f,
-        -100.0f, -300.0f, 0.0f,
+        -4.0f, 3.0f, 0.0f,
+        -2.0f, 3.0f, 0.0f,
+        -1.0f, -3.0f, 0.0f,
     };     
 
     const GLfloat t2[] = {
-        -200.0f, 300.0f, 0.0f,
-        -100.0f, -300.0f, 0.0f,
-        0.0f, -100.0f, 0.0f,
+        -2.0f, 3.0f, 0.0f,
+        -1.0f, -3.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
     };
 
     const GLfloat t3[] = {
-        200.0f, 300.0f, 0.0f,
-        400.0f, 300.0f, 0.0f,
-        100.0f, -300.0f, 0.0f, 
+        2.0f, 3.0f, 0.0f,
+        4.0f, 3.0f, 0.0f,
+        1.0f, -3.0f, 0.0f, 
     };
     const GLfloat t4[] = {
-        200.0f, 300.0f, 0.0f,
-        100.0f, -300.0f, 0.0f,
-        0.0f, -100.0f, 0.0f,
+        2.0f, 3.0f, 0.0f,
+        1.0f, -3.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
     };
     const GLfloat t5[] = {
-        -200.0f, -100.0f, 0.0f,
-        200.0f, -100.0f, 0.0f,
-        0.0f, 300.0f, 0.0f
+        -2.0f, -1.0f, 0.0f,
+        2.0f, -1.0f, 0.0f,
+        0.0f, 3.0f, 0.0f
     };
 
     const GLfloat s1_1[] = {
-        -400.0f, -100.0f, 0.0f,
-        -400.0f, 100.0f, 0.0f,
-        -800.0f, -100.0f, 0.0f,
+        -4.0f, -1.0f, 0.0f,
+        -4.0f, 1.0f, 0.0f,
+        -8.0f, -1.0f, 0.0f,
     };
     const GLfloat s1_2[] = {
-        -400.0f, 100.0f, 0.0f,
-        -800.0f, -100.0f, 0.0f,
-        -800.0f, 100.0f, 0.0f
+        -4.0f, 1.0f, 0.0f,
+        -8.0f, -1.0f, 0.0f,
+        -8.0f, 1.0f, 0.0f
     };
 
     const GLfloat s2_1[] = {
-        400.0f, -100.0f, 0.0f,
-        400.0f, 100.0f, 0.0f,
-        800.0f, -100.0f, 0.0f,
+        4.0f, -1.0f, 0.0f,
+        4.0f, 1.0f, 0.0f,
+        8.0f, -1.0f, 0.0f,
     };
     const GLfloat s2_2[] = {
-        400.0f, 100.0f, 0.0f,
-        800.0f, -100.0f, 0.0f,
-        800.0f, 100.0f, 0.0f
+        4.0f, 1.0f, 0.0f,
+        8.0f, -1.0f, 0.0f,
+        8.0f, 1.0f, 0.0f
     };
 
-    triangle Triangle(t1, window);
-    triangle Triangle2(t2, window);
-    triangle Triangle3(t3, window);
-    triangle Triangle4(t4, window);
-    triangle Triangle5(t5, window);
+    triangle Triangle(t1);
+    triangle Triangle2(t2);
+    triangle Triangle3(t3);
+    triangle Triangle4(t4);
+    triangle Triangle5(t5);
 
-    triangle s11(s1_1, window);
-    triangle s12(s1_2, window);
-    triangle s21(s2_1, window);
-    triangle s22(s2_2, window);
+    triangle s11(s1_1);
+    triangle s12(s1_2);
+    triangle s21(s2_1);
+    triangle s22(s2_2);
 
     Triangle.buffer();
     Triangle2.buffer();
@@ -135,13 +135,17 @@ int main()
 
     Shader shader(vertex_shader, fragment_shader);
 
-    glm::mat4 Projection = glm::perspective(glm::radians(90.0f), (float) 1.f / (float) 1.f, 0.1f, 100.0f);
-    // Or, for an ortho camera :
-    //glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
+    glm::mat4 Projection = glm::perspective(glm::radians(90.0f), (float) 1280.f / (float) 720.f, 0.1f, 100.0f);
   
     // Camera matrix
     glm::mat4 Model = glm::mat4(1.0f);
-
+    glm::mat4 effectView = glm::mat4(1.0f);
+    glm::mat4 View = glm::lookAt(
+            glm::vec3(0, 0, 10), // Camera is at (4,3,3), in World Space
+            glm::vec3(0,0,0), // and looks at the origin
+            glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+    );
+    
     // run the main loop
     bool running = true;
     while (running)
@@ -180,14 +184,10 @@ int main()
         // angleY = rotationSpeed * time; // Adjust deltaTime based on your frame time
 
         // // Calculate the camera position
-        // float camX = radius * sin(angleY);
-        // float camZ = radius * cos(angleY);
-        // glm::vec3 cameraPosition(camX, 0.0f, camZ);
-        glm::mat4 View = glm::lookAt(
-            glm::vec3(0, 0, 1), // Camera is at (4,3,3), in World Space
-            glm::vec3(0,0,0), // and looks at the origin
-            glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-        );
+        // glm::vec3 axis(0.0f, 1.0f, 0.0f);
+
+        // glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), time, axis);
+
         shader.SetInt("isPressed", 0);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
@@ -195,11 +195,14 @@ int main()
             glm::vec3 translation = shake(time, intensity, speed);
             glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), translation);    
         
-            View = translationMatrix * View;    
-        }
+            effectView = translationMatrix * effectView;    
+        } else {
+            effectView = glm::mat4(1.0f);
+        };
+
         // Model matrix : an identity matrix (model will be at the origin)
         // Our ModelViewProjection : multiplication of our 3 matrices
-        glm::mat4 mvp = Projection * View * Model; // Remember, matrix multiplication is the other way around
+        glm::mat4 mvp = Projection * View * Model * effectView; // Remember, matrix multiplication is the other way around
         shader.SetFloat("time", time);
         shader.Set4fv("MVP", mvp);
 

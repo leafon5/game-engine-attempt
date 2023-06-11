@@ -2,7 +2,7 @@
 
 #include "../pch.h"
 
-#include "shader.hpp"
+#include "../classes/shader.hpp"
 
 class Camera {
     public:

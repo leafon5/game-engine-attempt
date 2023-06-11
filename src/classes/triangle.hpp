@@ -1,12 +1,11 @@
 #pragma once
 
 #include "../pch.h"
-#include <SFML/Window.hpp>
 
 class triangle
 {
     public: 
-        triangle(const GLfloat vertices[], sf::Window &window);
+        triangle(const GLfloat vertices[]);
         void buffer();
         void draw();
         void move(glm::vec3 vector);
@@ -19,5 +18,4 @@ class triangle
         GLuint vertexbuffer;
         static const int vertexCount = 9; // Number of vertices
         GLfloat _vertices[vertexCount]; // Define the array with a fixed size
-        sf::Vector2u windowSize;
 };
