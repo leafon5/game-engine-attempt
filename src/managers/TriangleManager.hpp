@@ -2,19 +2,17 @@
 
 #include "../pch.h"
 #include "../classes/triangle.hpp"
+#include "../classes/shader.hpp"
 
 class TriangleManager {
 public:
-    TriangleManager(sf::Window& window);
-
-    void addTriangle(const GLfloat vertices[]);
-    void updateTriangle(int index, const glm::mat4& modelMatrix);
-    void renderTriangles(const glm::mat4& projection, const glm::mat4& view);
+    TriangleManager(sf::Window& window, Shader& shader);
+    ~TriangleManager();
+    triangle *addTriangle(const GLfloat vertices[]);
+    void render(glm::mat4 &mvp);
 
 private:
-    std::vector<triangle> triangles;
-    std::vector<glm::mat4> modelMatrices;
+    std::vector<triangle*> triangles;
     sf::Window& window;
-
-    void updateModelMatrices();
+    Shader& shader;
 };

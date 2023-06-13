@@ -10,8 +10,10 @@ triangle::triangle(const GLfloat vertices[]) {
     for (int i = 0; i < vertexCount; i++) {
         _vertices[i] = vertices[i];
     }
+    model = glm::mat4(1.0f);
     middle = calculateMiddlePoint();
     lengths = calculateLengths();
+    buffer();
 }
 
 glm::vec3 triangle::calculateMiddlePoint() const {
@@ -20,6 +22,19 @@ glm::vec3 triangle::calculateMiddlePoint() const {
     middlePoint.y = (_vertices[1] + _vertices[4] + _vertices[7]) / 3.0f;
     middlePoint.z = (_vertices[2] + _vertices[5] + _vertices[8]) / 3.0f;
     return middlePoint;
+}
+
+void triangle::setIndex(int i){
+    index = i;
+}
+
+int triangle::getIndex() {
+    return index;
+}
+
+void triangle::update(glm::mat4 transformation) {
+    model = model * transformation;
+
 }
 
 glm::vec3 triangle::calculateLengths() const {
@@ -36,7 +51,12 @@ void triangle::buffer() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
 }
 
-void triangle::draw() {
+void triangle::draw(glm::mat4 mvp, Shader &shader) {
+    glm::mat4 mvpee = mvp * model;
+
+        // Set the MVP matrix in the shader
+    shader.Set4fv("MVP", mvpee);
+
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glVertexAttribPointer(

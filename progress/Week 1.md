@@ -98,3 +98,61 @@ glm::mat4 glm::lookAt(glm::vec3 eye, glm::vec3 target, glm::vec3 up);
 ```
 *the up vector represents which direction is considered to be "up", so normally it would be `glm::vec3(0,1,0)`, and if you wanted it to be upside down, then just type `glm::vec3(0,-1,0)` (so essentially the negative side of the y axis is considered to be the "up" side)*
 
+# ~~Day 4~~
+
+today this day was pretty overwhelming for me (monday), so i'm taking a break on this day.
+
+# Day 5
+
+i made a `triangleManger` class, works pretty well until i realised it wont be very easy to make a `place` function that also takes all transformations from the model matrix into consideration, this will be very tough.
+
+decided to add an `update(glm::mat4 transformation)` function to the `triangle` class for the sake of making stuff easier, however this was very hard to do considering the trianglemanager class is really bad and needs an overhaul most likely.
+this whole function probably took me around 3 hours to make. 
+## Notes to self:
+- the VAO and VBO are responsible for sending the data to the shader, which is why you can send the model matrixes sepperately for each trianglem and even if we were to "unfold" (idk programming terms that well ok thank u) the code behind it, it would look like this:
+```cpp
+    // ...
+
+    glm::mat4 mvp = mv * model;
+
+    shader.Set4fv("MVP", mvp);
+
+    triangle1.draw();
+
+    glm::mat4 mvp = mv * model;
+
+    shader.Set4fv("MVP", mvp);
+
+    triangle2.draw();
+
+    glm::mat4 mvp = mv * model;
+
+    shader.Set4fv("MVP", mvp);
+
+    triangle3.draw();
+
+    // ...
+```
+thats why you can transform a sepperate triangle using a model matrix.
+```cpp
+    // ...
+
+    glm::mat4 mvp = mv * model;
+
+    shader.Set4fv("MVP", mvp);
+
+    triangle1.draw();
+
+    glm::mat4 transformation = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 0.0f))
+    glm::mat4 mvp = mv * model * transformation;
+
+    shader.Set4fv("MVP", mvp);
+
+    triangle2.draw();
+    // ...
+```
+
+## Plans for tommorow:
+- finishing the place function maybe? (remember to multiply the coordinates by the inverse transformation matrices, as the coords will be in model space, and the place function will modify the vertex data directly, because idk how else to do it)
+- Adding imgui for better experimentation and debugging,
+- Learning interpolation

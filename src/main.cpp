@@ -3,6 +3,7 @@
 #include "classes/triangle.hpp"
 #include "classes/shader.hpp"
 
+#include "managers/TriangleManager.hpp"
 
 #include "shaders/shaders.cpp"
 
@@ -39,10 +40,11 @@ int main()
     float radius = 2.0f; // Adjust the radius of the circular path
     float speed = 20.0f;
     float intensity = 0.2f;
-
+    float ticksInterval = 1.0f / 60.0f;  // Time interval for updating the translation (e.g., 0.1 seconds)
+    float updateTime = 0.0f;  // Time counter for tracking the update interval
      // create the window
     sf::Window window(sf::VideoMode(1280, 720), "test?", sf::Style::Default, sf::ContextSettings(32));
-    window.setFramerateLimit(144); // Set the framerate to 60 FPS
+    window.setFramerateLimit(240); // Set the framerate to 60 FPS
     // activate the window
     window.setActive(true);
     sf::Clock clock;
@@ -111,34 +113,25 @@ int main()
         8.0f, 1.0f, 0.0f
     };
 
-    triangle Triangle(t1);
-    triangle Triangle2(t2);
-    triangle Triangle3(t3);
-    triangle Triangle4(t4);
-    triangle Triangle5(t5);
-
-    triangle s11(s1_1);
-    triangle s12(s1_2);
-    triangle s21(s2_1);
-    triangle s22(s2_2);
-
-    Triangle.buffer();
-    Triangle2.buffer();
-    Triangle3.buffer();
-    Triangle4.buffer();
-    Triangle5.buffer();
-
-    s11.buffer();
-    s12.buffer();
-    s21.buffer();
-    s22.buffer();
-
     Shader shader(vertex_shader, fragment_shader);
+
+    TriangleManager triangleManager(window, shader);
+
+    triangle *Triangle = triangleManager.addTriangle(t1);
+    triangle *triangle2 = triangleManager.addTriangle(t2);
+    triangle *triangle3 = triangleManager.addTriangle(t3);
+    triangle *triangle4 = triangleManager.addTriangle(t4);
+    triangle *triangle5 = triangleManager.addTriangle(t5);
+
+    triangle *s11 = triangleManager.addTriangle(s1_1);
+    triangle *s12 = triangleManager.addTriangle(s1_2);
+    triangle *s21 = triangleManager.addTriangle(s2_1);
+    triangle *s22 = triangleManager.addTriangle(s2_2);
+
 
     glm::mat4 Projection = glm::perspective(glm::radians(90.0f), (float) 1280.f / (float) 720.f, 0.1f, 100.0f);
   
     // Camera matrix
-    glm::mat4 Model = glm::mat4(1.0f);
     glm::mat4 effectView = glm::mat4(1.0f);
     glm::mat4 View = glm::lookAt(
             glm::vec3(0, 0, 10), // Camera is at (4,3,3), in World Space
@@ -150,10 +143,9 @@ int main()
     bool running = true;
     while (running)
     {
-        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-        // handle events
         deltaTime = clock.restart();
-
+        time += deltaTime.asSeconds();
+        // handle events
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -170,15 +162,23 @@ int main()
         }
         // Calculate the vertical displacement based on time and duration
         float t = std::fmod(time, jumpDuration);
-        float displacement = -4.0f * jumpHeight / (jumpDuration * jumpDuration) * (t - jumpDuration / 2.0f) * (t - jumpDuration / 2.0f) + jumpHeight;
-        float spacing = s11.calculateMiddlePoint().y - s12.calculateMiddlePoint().y;
-        // std::cout << displacement;
-        s11.place({s11.calculateMiddlePoint().x, displacement + spacing, 0.0f});
-        s12.place({s12.calculateMiddlePoint().x, displacement, 0.0f});
-        s21.place({s21.calculateMiddlePoint().x, displacement + spacing, 0.0f});
-        s22.place({s22.calculateMiddlePoint().x, displacement, 0.0f});
 
-        time += deltaTime.asSeconds();
+
+        float displacement = 0.125f * sin(3.1415f * time);
+
+        
+        // tick loop
+        
+        glm::mat4 transMatrix = glm::mat4(1.0f);
+
+        transMatrix[3][1] = displacement;
+        
+        s11->update(transMatrix);
+        s12->update(transMatrix);
+        s21->update(transMatrix);
+        s22->update(transMatrix);
+
+
         // clear the buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // angleY = rotationSpeed * time; // Adjust deltaTime based on your frame time
@@ -200,27 +200,11 @@ int main()
             effectView = glm::mat4(1.0f);
         };
 
-        // Model matrix : an identity matrix (model will be at the origin)
         // Our ModelViewProjection : multiplication of our 3 matrices
-        glm::mat4 mvp = Projection * View * Model * effectView; // Remember, matrix multiplication is the other way around
+        glm::mat4 mvp = Projection * View * effectView; // Remember, matrix multiplication is the other way around
         shader.SetFloat("time", time);
-        shader.Set4fv("MVP", mvp);
+        triangleManager.render(mvp);
 
-        shader.Use();
-        // draw...
-        Triangle5.draw();
-        Triangle4.draw();
-        Triangle3.draw();
-        Triangle2.draw();
-        Triangle.draw();
-
-        s11.draw();
-        s12.draw();
-        s21.draw();
-        s22.draw();
-        // 1st attribute buffer : vertices
-
-        // end the current frame (internally swaps the front and back buffers)
         window.display();
     }
 
