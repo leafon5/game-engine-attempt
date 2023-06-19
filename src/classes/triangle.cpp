@@ -17,11 +17,13 @@ triangle::triangle(const GLfloat vertices[]) {
 }
 
 glm::vec3 triangle::calculateMiddlePoint() const {
-    glm::vec3 middlePoint;
+    glm::vec4 middlePoint;
     middlePoint.x = (_vertices[0] + _vertices[3] + _vertices[6]) / 3.0f;
     middlePoint.y = (_vertices[1] + _vertices[4] + _vertices[7]) / 3.0f;
     middlePoint.z = (_vertices[2] + _vertices[5] + _vertices[8]) / 3.0f;
-    return middlePoint;
+    middlePoint.w = 1.f;
+
+    return glm::vec3(middlePoint * model);
 }
 
 void triangle::setIndex(int i){
@@ -87,8 +89,8 @@ void triangle::move(glm::vec3 vector) {
     buffer();
 }
 
-void triangle::place(glm::vec3 point) {
-    
+void triangle::place(glm::vec3 _point) {
+    glm::vec3 point = glm::vec3(glm::vec4(_point, 1.f) * glm::inverse(model));
     glm::vec3 currentMiddle = calculateMiddlePoint();
     glm::vec3 displacement = point - currentMiddle;
 

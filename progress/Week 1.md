@@ -156,3 +156,11 @@ thats why you can transform a sepperate triangle using a model matrix.
 - finishing the place function maybe? (remember to multiply the coordinates by the inverse transformation matrices, as the coords will be in model space, and the place function will modify the vertex data directly, because idk how else to do it)
 - Adding imgui for better experimentation and debugging,
 - Learning interpolation
+
+# ~~Day 6~~
+
+sorry, exhausting day, holidays will start in around 2 days tho so expect a lot more progress soon
+
+# ~~Day 7 (+ a few others)~~
+
+busy.

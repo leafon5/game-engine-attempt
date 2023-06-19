@@ -41,8 +41,7 @@ int main()
     float speed = 20.0f;
     float intensity = 0.2f;
     float ticksInterval = 1.0f / 60.0f;  // Time interval for updating the translation (e.g., 0.1 seconds)
-    float updateTime = 0.0f;  // Time counter for tracking the update interval
-     // create the window
+     // Time counter for tracking the placethis.getPosition   // create the window
     sf::Window window(sf::VideoMode(1280, 720), "test?", sf::Style::Default, sf::ContextSettings(32));
     window.setFramerateLimit(240); // Set the framerate to 60 FPS
     // activate the window
@@ -164,7 +163,7 @@ int main()
         float t = std::fmod(time, jumpDuration);
 
 
-        float displacement = 0.125f * sin(3.1415f * time);
+        float displacement = 2.f * sin(3.1415f * time);
 
         
         // tick loop
@@ -173,10 +172,13 @@ int main()
 
         transMatrix[3][1] = displacement;
         
-        s11->update(transMatrix);
-        s12->update(transMatrix);
-        s21->update(transMatrix);
-        s22->update(transMatrix);
+        float midiff1 = s11->calculateMiddlePoint().y - s12->calculateMiddlePoint().y;
+        float midiff2 = s21->calculateMiddlePoint().y - s22->calculateMiddlePoint().y;
+
+        s11->place(glm::vec3(s11->calculateMiddlePoint().x, displacement + midiff1, 0.0f));
+        s12->place(glm::vec3(s12->calculateMiddlePoint().x, displacement, 0.0f));
+        s21->place(glm::vec3(s21->calculateMiddlePoint().x, displacement + midiff2, 0.0f));
+        s22->place(glm::vec3(s22->calculateMiddlePoint().x, displacement, 0.f));
 
 
         // clear the buffers
